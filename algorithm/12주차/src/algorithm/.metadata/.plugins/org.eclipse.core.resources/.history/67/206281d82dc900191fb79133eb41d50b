@@ -1,0 +1,74 @@
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Scanner;
+
+public class 자기방으로돌아가기 {
+
+	static int T;
+	static int N;
+	static int stuNum;
+	static Scanner sc=new Scanner(System.in);
+	
+	static class room{
+		int from;
+		int to;
+		public room(int from,int to) {
+			// TODO Auto-generated constructor stub
+			this.from=from;
+			this.to=to;
+		}
+	}
+	
+	static LinkedList<room> leftList=new LinkedList<>();
+	static LinkedList<room> rightList=new LinkedList<>();
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		T=sc.nextInt();
+		for (int tc = 1; tc <=T; tc++) {
+			N=sc.nextInt();
+			for (int i = 0; i < N; i++) {
+				int tmpfrom=sc.nextInt();
+				int tmpto=sc.nextInt();
+				if(tmpfrom<tmpto) {
+					leftList.add(new room(tmpfrom,tmpto));
+				}else rightList.add(new room(tmpfrom,tmpto))
+			}
+			Comparator com=new Comparator<room>() {
+
+				@Override
+				public int compare(room o1, room o2) {
+					// TODO Auto-generated method stub
+					return o2.to-o1.to;
+				}
+			};
+		
+			Collections.sort(leftList,com);
+			Collections.sort(rightList,com);
+			int cnt=1;
+			int end=leftList.get(0).to;
+			int start=leftList.get(0).from;
+			for (int i = 1; i < leftList.size(); i++) {
+				if(start<leftList.get(i).to) {
+					cnt++;
+				}
+				end=leftList.get(i).to;
+				start=leftList.get(i).from;
+			}
+			cnt-=1;
+			end=rightList.get(0).to;
+			start=rightList.get(0).from;
+			for (int i = 1; i < leftList.size(); i++) {
+				if(start<leftList.get(i).to) {
+					cnt++;
+				}
+				end=rightList.get(i).to;
+				start=rightList.get(i).from;
+			}
+			System.out.println("#"+tc+" "+cnt);
+		}//tc
+	}
+
+}

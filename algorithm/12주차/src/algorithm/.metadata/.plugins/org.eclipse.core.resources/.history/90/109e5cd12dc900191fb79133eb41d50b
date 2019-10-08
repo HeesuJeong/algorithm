@@ -1,0 +1,59 @@
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Scanner;
+
+public class 자기방으로돌아가기 {
+
+	static int T;
+	static int N;
+	static int stuNum;
+	static Scanner sc=new Scanner(System.in);
+	
+	static class room{
+		int from;
+		int to;
+		public room(int from,int to) {
+			// TODO Auto-generated constructor stub
+			this.from=from;
+			this.to=to;
+		}
+	}
+	
+	static room[] rArr;
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		T=sc.nextInt();
+		for (int tc = 1; tc <=T; tc++) {
+			N=sc.nextInt();
+			rArr=new room[N];
+			for (int i = 0; i < N; i++) {
+				rArr[i]=new room(sc.nextInt(),sc.nextInt());
+			}
+			Arrays.sort(rArr,new Comparator<room>() {
+
+				@Override
+				public int compare(room o1, room o2) {
+					// TODO Auto-generated method stub
+					return (-1)*(o1.to-o2.to);
+				}
+
+			});
+			for (int i = 0; i < rArr.length; i++) {
+				System.out.println(rArr[i].from+" "+rArr[i].to);
+			}
+			int cnt=1;
+			int end=rArr[0].to;
+			int start=rArr[0].from;
+			for (int i = 1; i < rArr.length; i++) {
+				if(start<rArr[i].to) {
+					cnt++;
+				}
+				end=rArr[i].to;
+				start=rArr[i].from;
+			}
+			System.out.println("#"+tc+" "+cnt);
+		}//tc
+	}
+
+}

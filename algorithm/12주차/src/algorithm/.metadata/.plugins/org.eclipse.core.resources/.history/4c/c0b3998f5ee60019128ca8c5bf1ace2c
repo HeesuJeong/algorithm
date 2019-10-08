@@ -1,0 +1,113 @@
+package 금요일;
+
+import java.awt.Point;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+public class 화염에서탈출 {
+
+	static int R;
+	static int C;
+
+	static boolean inMap(int x, int y) {
+		return (x >= 0 && x < R && y >= 0 && y < C);
+	}
+
+	static int[] dx = { -1, 1, 0, 0 };
+	static int[] dy = { 0, 0, -1, 1 };
+	static char[][] map;
+	static Queue<Point> q = new LinkedList<Point>();// 불 퍼트리기
+	static int hx, hy; // 집 위치
+	static int sx = 0, sy = 0; // 시작위치
+	static int result = -1; // 0이상이면 집 도착 가능한 것
+
+	// 불은 바위,요새 못 지나 (빈칸만)
+	// 지섭은 불,바위 못 지나(집 도착 할 때까지 빈칸만)
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		R = sc.nextInt();
+		C = sc.nextInt();
+		map = new char[R][C];
+		visited = new boolean[R][C];
+
+		for (int i = 0; i < R; i++) {
+			String str = sc.next();
+			for (int j = 0; j < C; j++) {
+				char c = str.charAt(j);
+				map[i][j] = c;
+				if (c == 'S') {// 시작 위치
+					sx = i;
+					sy = j;
+				} else if (c == '*') { // 불을 큐에 저장
+					q.add(new Point(i, j));
+				} else if (c == 'D') {// 집 위치
+					hx = i;
+					hy = j;
+				}
+			}
+		} // 입력 끝
+		bfs();
+		if (result > 0)
+			System.out.println(result);
+		else
+			System.out.println("impossible");
+	}
+
+	private static void bfs() {
+		// TODO Auto-generated method stub
+		int time=0;
+		while (!q.isEmpty()) {			
+			if (result > 0)
+				break;
+			int qSize = q.size();
+			for (int i = 0; i < qSize; i++) {
+				Point p = q.poll();
+				for (int j = 0; j < 4; j++) {
+					int nx = p.x + dx[j];
+					int ny = p.y + dy[j];
+
+					// 빈칸인 경우 불 퍼트리기
+					if (inMap(nx, ny) && map[nx][ny] == '.') {
+						map[nx][ny] = '*';
+						q.add(new Point(nx, ny));
+					}
+				}
+			}
+			time++;
+			for (int i = 0; i <R; i++) {
+				for (int j = 0; j < C; j++) {
+					System.out.print(map[i][j]);
+				}
+				System.out.println();
+			}
+			System.out.println("========");
+			dfs(sx, sy, 1, time); // 지섭이도 1분간만 이동 가능
+		}
+	}
+
+	static boolean[][] visited;
+
+	private static void dfs(int x, int y, int minu, int cnt) {
+		// TODO Auto-generated method stub
+	
+		if (minu == cnt)
+			return;
+		for (int i = 0; i < 4; i++) {
+			int nx = x + dx[i];
+			int ny = y + dy[i];
+			// 빈칸이거나 집이면 이동 가능
+			if (inMap(nx, ny) && visited[nx][ny]==false&&(map[nx][ny] == '.' || map[nx][ny] == 'D')) {
+				if (map[x][y] == 'D') {
+					System.out.println("result는 "+result);
+					result = minu;
+					return;
+				}
+				visited[nx][ny]=true;
+				dfs(nx,ny,minu++,cnt);
+			}
+		}
+	}
+
+}
