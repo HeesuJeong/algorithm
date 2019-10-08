@@ -1,0 +1,10 @@
+package 금요일;
+
+public class 부분수열의합2 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
