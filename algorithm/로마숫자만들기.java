@@ -1,7 +1,7 @@
 import java.util.LinkedList;
 import java.util.Scanner;
 
-public class ë¡œë§ˆìˆ«ìë§Œë“¤ê¸° {
+public class ·Î¸¶¼ıÀÚ¸¸µé±â {
 	static int N;
 	static int[] arr= {1,5,10,50};
 	static boolean[] visited=new boolean[1001];

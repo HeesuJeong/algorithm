@@ -1,89 +1,82 @@
-package ê¸ˆìš”ì¼;
-
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 
-public class ë“±ì‚°ë¡œì¡°ì„± {
+public class µî»ê·ÎÁ¶¼º {
+
+	static int TC;
 	static int N;
 	static int K;
 	static int[][] map;
+	static boolean[][] visited;
 	static int[] dx= {-1,1,0,0};
 	static int[] dy= {0,0,-1,1};
-	static boolean inMap(int x, int y) {
-		return x>=0&&x<N&&y>=0&&y<N;
-	}
-	static int result;
-	static class info{
-		int x;
-		int y;
-		public info(int x,int y) {
-			// TODO Auto-generated constructor stub
-			this.x=x;
-			this.y=y;
-		}
-	}
-	static ArrayList<info> li;
-	static boolean[][] visited;
+	static Scanner sc=new Scanner(System.in);
+	static int resul; //°á°ú°ª
+	static int max; //°¡Àå ³ôÀº ³ôÀÌ
+	static int cnt;
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Scanner sc= new Scanner(System.in);
-		int TC=sc.nextInt();
+		TC=sc.nextInt();
 		for (int tc = 1; tc <=TC; tc++) {
 			N=sc.nextInt();
-			K=sc.nextInt();
+			//¹è¿­ ÃÊ±âÈ­
 			map=new int[N][N];
-			li=new ArrayList<>();
-			int max=0;
-			for (int i = 0; i < N; i++) {
+			visited=new boolean[N][N];
+			//¸Å¹ø ÃÊ±âÈ­
+			max=Integer.MIN_VALUE;
+			resul=Integer.MIN_VALUE;
+			
+			K=sc.nextInt();
+			for (int i = 0; i <N; i++) {
 				for (int j = 0; j <N; j++) {
-					map[i][j]=sc.nextInt();
-					max=Math.max(map[i][j], max);
+					int input=sc.nextInt();
+					map[i][j]=input;
+					max=Math.max(max, input);
 				}
-			} 
-			for (int i = 0; i < N; i++) {
+			}
+			for (int i = 0; i <N; i++) {
 				for (int j = 0; j < N; j++) {
-					if(max==map[i][j]) li.add(new info(i, j));
+					if(map[i][j]==max) {
+						visited[i][j]=true;
+						DFS(i,j,1,false);
+						visited[i][j]=false;
+					}
 				}
 			}
-			result=Integer.MIN_VALUE;
-			for (int i = 0; i < li.size(); i++) {
-				int x=li.get(i).x;
-				int y=li.get(i).y;
-				visited=new boolean[N][N];
-				visited[x][y]=true;
-				DFS(x,y,1,1);
-				visited[x][y]=false;
-			}
-			System.out.println("#"+tc+" "+result);
+			
+			System.out.println("#"+tc+" "+resul);
 		}//tc
 	}
-	private static void DFS(int x, int y,int opp,int cnt) {
-		// TODO Auto-generated method stub
-		if(result<cnt) {
-			//System.out.println("ê°±ì‹ :" +cnt);
-			result=cnt;
-		}
+
+	static boolean inMap(int x,int y) {
+		return x>=0&&x<N&&y>=0&&y<N;
+	}
+	
+	static boolean compare(int from,int to) {
+		return from>to;
+	}
+	static void DFS(int x,int y,int cnt,boolean chk) {
+		
+		resul=Math.max(cnt, resul);
 		for (int i = 0; i < 4; i++) {
-			
 			int nx=x+dx[i];
 			int ny=y+dy[i];
-			if(inMap(nx, ny)&&visited[nx][ny]==false) {
-				if(map[nx][ny]<map[x][y]) {
-					//System.out.println("ë‚˜ì˜ ìœ„ì¹˜ "+x+","+y+" ë³´ëŠ” ìœ„ì¹˜"+nx+","+ny);
+			//¹üÀ§ ¾È¿¡ ÀÖ°í ±æÀÌ ´õ ³·¾ÆÁö´Â °æ¿ì
+			if(inMap(nx, ny)&&visited[nx][ny]==false&&compare(map[x][y],map[nx][ny])) {
+				visited[nx][ny]=true;
+				DFS(nx,ny,cnt+1,chk);
+				visited[nx][ny]=false;
+			}
+			//¹üÀ§ ¾È¿¡ ÀÖ°í&&±æÀÇ Â÷ÀÌ°¡ KÀÌÇÏ&& K~1 ³·Çôº¸±â
+			else if(chk==false&&inMap(nx, ny)&&visited[nx][ny]==false&&!compare(map[x][y],map[nx][ny])&&map[nx][ny]-map[x][y]<K) {
 					visited[nx][ny]=true;
-					DFS(nx,ny,opp,cnt+1);
-					visited[nx][ny]=false;
-				}else if(opp==1&&map[nx][ny]>=map[x][y]&&map[nx][ny]-K<map[x][y]){
-					//ë‚˜ë³´ë‹¤ ë” í° ê³³ ì´ì§€ë§Œ í•œ ë²ˆ ê¹ì•„ì„œ ê°ˆ ìˆ˜ ìžˆìœ¼ë©´ ê°„ë‹¤.
 					int tmp=map[nx][ny];
-					visited[nx][ny]=true;
 					map[nx][ny]=map[x][y]-1;
-					DFS(nx,ny,opp-1,cnt+1);
-					map[nx][ny]=tmp;
+					DFS(nx,ny,cnt+1,true);
 					visited[nx][ny]=false;
-				}
+					map[nx][ny]=tmp;
 			}
 		}
 	}
-
 }

@@ -1,139 +1,130 @@
-package ëª©ìš”ì¼;
 
-import java.util.Arrays;
-import java.util.Iterator;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
 
-public class ì•„ê¸°ìƒì–´ {
-
-	static int[][] map;
-	static int N;
-	static boolean[][] visited;
-
-	static class shark {
-		int x;
-		int y;
-		int size;
-		int cntEat;
-
-		public shark(int x, int y, int size, int cntEat) {
-			// TODO Auto-generated constructor stub
-			this.x = x;
+public class ¾Æ±â»ó¾î {
+	static class pos implements Comparable<pos>{
+		int y, x, cnt;
+		
+		public pos(int y, int x, int cnt) {
 			this.y = y;
-			this.size = size;
-			this.cntEat = cntEat;
-		}
-	}
-
-	static int[] dx = { -1, 1, 0, 0 };
-	static int[] dy = { 0, 0, -1, 1 };
-
-	static boolean inMap(int x, int y) {
-		return x >= 0 && x < N && y >= 0 && y < N;
-	}
-
-	static class posi implements Comparable<posi> {
-		int x;
-		int y;
-		int dist;
-
-		public posi(int x, int y, int dist) {
-			// TODO Auto-generated constructor stub
 			this.x = x;
-			this.y = y;
-			this.dist = dist;
+			this.cnt = cnt;
 		}
-
+		
 		@Override
-		public int compareTo(posi o) {
+		public int compareTo(pos o) {
 			// TODO Auto-generated method stub
-			int ret = 0;
-			if (Integer.compare(this.dist, o.dist) > 0)
-				ret = 1;
-			else if (Integer.compare(this.dist, o.dist) == 0) {
-				if (Integer.compare(this.x, o.x) > 0)
-					ret = 1;
-				else if (Integer.compare(this.x, o.x) == 0) {
-					if (Integer.compare(this.y, o.y) > 0)
-						ret = 1;
-					else if (Integer.compare(this.y, o.y) == 0)
-						ret = 0;
-					else
-						ret = -1;
-				} else
-					ret = -1;
-			} else
-				ret = -1;
-			return ret;
+			if((this.cnt == o.cnt)&&(this.y != o.y)) {
+				return this.y-o.y;
+			}
+			else if((this.cnt == o.cnt)&&(this.y == o.y)) {
+				return this.x-o.x;
+			}
+			return this.cnt-o.cnt;
 		}
 	}
-
-	static PriorityQueue<posi> pq;
-	static shark baby;
-
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner sc = new Scanner(System.in);
-		N = sc.nextInt();
-		map = new int[N][N];
-		visited = new boolean[N][N];
-		pq = new PriorityQueue<>();
-		int result = 0; // ê²°ê³¼ë¡œ ì‚¬ìš©í•  ì‹œê°„ì„ ë”í• ê±°ì–Œ
+		int N = sc.nextInt();
+		int[][] map = new int[N][N];
+		boolean[][] visited = new boolean[N][N];
+		Queue<pos> list = new LinkedList<>();
+		int shark_y = 0, shark_x = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
-				int tmp = sc.nextInt();
-				if (tmp == 9)
-					baby = new shark(i, j, 2, 0);
-				else
-					map[i][j] = tmp;
+				map[i][j] = sc.nextInt();
+				if(map[i][j]==9) {
+					map[i][j] = 0;
+					visited[i][j] = true;
+					list.add(new pos(i, j, 0));
+					shark_y = i;
+					shark_x = j;
+				}
 			}
 		}
-		boolean chk = true;
-		while (chk) {
-			Queue<posi> q = new LinkedList<>();
-			q.add(new posi(baby.x, baby.y, 0)); // ì•„ê¸°ìƒì–´ ì²˜ìŒìœ„ì¹˜
-			visited[baby.x][baby.y] = true;
-			boolean chkchk=true;
-			while (!q.isEmpty()) {
-				posi tmp = q.poll();
-				//System.out.println("ë¬´í•œ");
-				for (int i = 0; i < 4; i++) {
-					int nx = tmp.x + dx[i];
-					int ny = tmp.y + dy[i];
-					int nd = tmp.dist + 1;
-					// ë¬¼ê³ ê¸°ê°€ ìƒì–´ë³´ë‹¤ ì‘ê±°ë‚˜ ê°™ìœ¼ë©´ ì´ë™ ê°€ëŠ¥
-					if (inMap(nx, ny) && baby.size >= map[nx][ny] && !visited[nx][ny]) {
-						visited[nx][ny]=true;
-						q.add(new posi(nx, ny, nd));
-						// ì‘ìœ¼ë©´ ë¨¹ì„ ìˆ˜ ì‡ë‹¤ =>í›„ë³´êµ° ì €ì¥
-						if (map[nx][ny] < baby.size&&map[nx][ny]!=0) {
-							pq.add(new posi(nx, ny, nd));
-						}
+		int cnt = 0;
+		int feed = 0;
+		int size = 2;
+		int[][] delta = {{-1,0},{1,0},{0,-1},{0,1}};
+		ArrayList<pos> path = new ArrayList<>(); //¸ÔÀÌ¸¦ ¸ÔÀ» ¼ö ÀÖ°í °°Àº °Å¸®¿¡ ÀÖ´Â ÁÂÇ¥µéÀ» ´ã´Â list 
+		boolean shortest = false;//¸ÔÀ»°É Ã£¾Ò´ÂÁö
+		boolean check = false;
+		int result = 0;
+		loop : while(!list.isEmpty()) {
+			
+			int y = list.peek().y;//ÀÌµ¿ ÁÂÇ¥
+			int x = list.peek().x;
+			cnt = list.poll().cnt;
+			
+			check = false;
+			for (int i = 0; i < 4; i++) {
+				int r = y + delta[i][0];
+				int c = x + delta[i][1];
+				if(r<0 || c<0 || r>=N || c>=N) continue;
+				
+				if(map[r][c] > size) continue; //³» Å©±âº¸´Ù Å©¸é ±×³É Áö³ª°¡ÀÚ
+				
+				if(!visited[r][c]) {
+					if(map[r][c] == 0 || map[r][c] == size) {//¸ø ¸Ô°í Áö³ª°¡±â¸¸ ÇÒ¼öÀÖ´Â °æ¿ì
+						check = true;
+						visited[r][c] = true;
+						list.add(new pos(r,c,cnt+1));
 					}
+					else if(map[r][c] < size) {//¸Ô¾î
+						shortest = true;
+						check = true;
+						result = cnt;
+						list.add(new pos(-1,-1,-1));
+						path.add(new pos(r,c,cnt+1));
+					}
+					
 				}
+				
 			}
-			if (!pq.isEmpty()) {
-				posi move = pq.peek();
-				result += move.dist;
-				baby.x = move.x;
-				baby.y = move.y;
-				baby.cntEat++;
-				if (baby.cntEat == baby.size) {
-					baby.size++;
-					baby.cntEat = 0;
-				}
-				map[move.x][move.y]=0; //***************
-				pq.clear();
-				for (int i = 0; i < N; i++) {
-					Arrays.fill(visited[i],false);
-				}
-			} else {
-				chk=false;
+			if(!check && shortest) {
+				list.add(new pos(-1,-1,-1));
 			}
+				
+			if(shortest && result != list.peek().cnt) { //¹°°í±â¸¦ ¸ÔÀ» ¼öÀÖ´Â »óÈ²¿¡ °°Àº °Å¸®¿¡¼­ ¹°°í±â¸¦ ¸ÔÀ» ¼öÀÖ´Â ÁÂÇ¥°ªÀ» ºñ±³ÇÏÀÚ
+				feed++;
+				if(feed == size) {//¸ÔÀÌ¸¦ ¸Ô¾úÀ¸´Ï µ¢Ä¡¸¦ Å°¿öÁÖ±â
+					size++;
+					feed=0;
+				}
+				for (int i = 0; i < N; i++) 
+					for (int j = 0; j < N; j++) 
+						visited[i][j] = false;
+				
+				shortest = false;
+				list.clear();
+				Collections.sort(path);//Á¤·ÄÇØ¼­ 0¹øÂ°²¨¸¸ ¾µ²¨¾ß
+				shark_y = path.get(0).y;
+				shark_x = path.get(0).x;
+				map[shark_y][shark_x] = 0;
+				
+				boolean can = false;
+				for (int i = 0; i < N; i++) 
+					for (int j = 0; j < N; j++) 
+						if(map[i][j] !=0 && map[i][j] < size) can = true;
+				
+				if(!can) { //¸ÔÀ»°Ô¾øÀ¸¸é ´õ º¼°Å¾øÀÌ ±×³É ³¡
+					result = cnt+1;
+					break loop;
+				}
+				result = cnt+1;
+				list.add(new pos(shark_y, shark_x, cnt+1));
+				path.clear();
+			}
+			
 		}
-			System.out.println(result);
-		}
+		
+		System.out.println(result);
+	}
 }

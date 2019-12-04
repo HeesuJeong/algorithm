@@ -1,27 +1,41 @@
-package ëª©ìš”ì¼;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
-public class _1ë¡œë§Œë“¤ê¸° {
+public class _1·Î¸¸µé±â {
 
+	static int[] arr= {1,2,3};
+	static int N;
+	static Scanner sc=new Scanner(System.in);
+	static int CNT;
+	static int resul=10000;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		// TODO Auto-generated method stub
-		Scanner sc=new Scanner(System.in);
-		int N=sc.nextInt();
-		int[] arr=new int[N+1];
-		arr[1]=1;
-		arr[2]=1;
-		arr[3]=1;
-		for (int i = 4; i <=N; i++) {
-			arr[i]=arr[i-1]+1;
-			if(i%2==0)
-				arr[i]=Math.min(arr[i],arr[i/2]+1);
-			if(i%3==0)
-				arr[i]=Math.min(arr[i],arr[i/3]+1);
-		}
-		System.out.println(arr[N]);
+//		N=sc.nextInt();
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		recur(N,0);
+		System.out.println(resul);
 	}
-
+	static void recur(int r,int c) {
+		if(r==1) {
+			resul=Math.min(c, resul);
+			return;
+		}
+		//else if(r<0) return;
+		
+		for (int i = 0; i < arr.length; i++) {
+			if(i==0&&(r%3==0)) {
+				int tmpR=r/3;
+				recur(tmpR,c+1);
+			}
+			else if(i==1&&(r%2==0)) {
+				int tmpR=r/2;
+				recur(tmpR,c+1);
+			}else if(i==2) {
+				recur(r-1,c+1);
+			}
+		}
+	}
 }
-

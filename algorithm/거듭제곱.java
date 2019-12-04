@@ -1,40 +1,17 @@
-package ìˆ˜ìš”ì¼;
+package Àç±ÍÇÔ¼ö;
 
-import java.util.Scanner;
+public class °ÅµìÁ¦°ö {
 
-public class ê±°ë“­ì œê³± {
-
-	static int a;
-	static int b;
-	static Scanner sc= new Scanner(System.in);
-	static int cnt1;
-	static int cnt2;
-	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		a=sc.nextInt();
-		b=sc.nextInt();
-		System.out.println(pow(a,b));
-		System.out.println(pow2(a,b));
-		System.out.println(cnt1);
-		System.out.println(cnt2);
+System.out.println(pow(2,4));
 	}
-	
-	//ë¶„í• ì •ë³µ
 	static int pow(int a,int b) {
-		cnt1++;
 		if(b==1) {
-			//bê°€ í™€ìˆ˜
 			return a;
 		}
 		int tmp=pow(a,b/2);
 		if(b%2==1) return tmp*tmp*a;
 		else return tmp*tmp;
-	}
-	//ì¬ê·€
-	static int pow2(int a,int b) {
-		cnt2++;
-		if(b==1) return a;
-		return a*pow2(a,b-1);
 	}
 }
